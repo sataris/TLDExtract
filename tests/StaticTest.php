@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TLDExtract: Library for extraction of domain parts e.g. TLD. Domain parser that uses Public Suffix List.
  *
@@ -11,13 +12,13 @@
 namespace LayerShifter\TLDExtract\Tests;
 
 use LayerShifter\TLDExtract\Extract;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for static.php.
  */
-class StaticTest extends \PHPUnit_Framework_TestCase
+class StaticTest extends TestCase
 {
-
     /**
      * Tests for tld_extract() function.
      *

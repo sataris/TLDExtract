@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TLDExtract: Library for extraction of domain parts e.g. TLD. Domain parser that uses Public Suffix List.
  *
@@ -14,13 +15,13 @@ use LayerShifter\TLDDatabase\Store;
 use LayerShifter\TLDExtract\Exceptions\RuntimeException;
 use LayerShifter\TLDExtract\Extract;
 use LayerShifter\TLDExtract\Result;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for Extract class.
  */
-class ExtractTest extends \PHPUnit_Framework_TestCase
+class ExtractTest extends TestCase
 {
-
     /**
      * @var Extract Object of Extract class
      */
@@ -31,7 +32,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extract = new Extract();
 
@@ -43,43 +44,35 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      *
      * @void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $defaultMode = Extract::MODE_ALLOW_ICANN
-            | Extract::MODE_ALLOW_PRIVATE
-            | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES;
+        | Extract::MODE_ALLOW_PRIVATE
+        | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES;
 
-        // Variant 1.
-
+    // Variant 1.
         $extract = new Extract();
+        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
+        $this->assertEquals($defaultMode, $extract->getExtractionMode());
+        $this->assertEquals(Result::class, $extract->getResult());
 
-        static::assertAttributeInstanceOf(Store::class, 'suffixStore', $extract);
-        static::assertAttributeEquals($defaultMode, 'extractionMode', $extract);
-        static::assertAttributeEquals(Result::class, 'resultClassName', $extract);
-
-        // Variant 2.
-
+    // Variant 2.
         $extract = new Extract(__DIR__ . '/sample-database.php');
+        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
+        $this->assertEquals($defaultMode, $extract->getExtractionMode());
+        $this->assertEquals(Result::class, $extract->getResult());
 
-        static::assertAttributeInstanceOf(Store::class, 'suffixStore', $extract);
-        static::assertAttributeEquals($defaultMode, 'extractionMode', $extract);
-        static::assertAttributeEquals(Result::class, 'resultClassName', $extract);
-
-        // Variant 3.
-
+    // Variant 3.
         $extract = new Extract(null, SampleResult::class);
+        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
+        $this->assertEquals($defaultMode, $extract->getExtractionMode());
+        $this->assertEquals(SampleResult::class, $extract->getResult());
 
-        static::assertAttributeInstanceOf(Store::class, 'suffixStore', $extract);
-        static::assertAttributeEquals($defaultMode, 'extractionMode', $extract);
-        static::assertAttributeEquals(SampleResult::class, 'resultClassName', $extract);
-
-        // Variant 4.
-
+    // Variant 4.
         $extract = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
-
-        static::assertAttributeInstanceOf(Store::class, 'suffixStore', $extract);
-        static::assertAttributeEquals(Extract::MODE_ALLOW_ICANN, 'extractionMode', $extract);
-        static::assertAttributeEquals(Result::class, 'resultClassName', $extract);
+        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
+        $this->assertEquals(Extract::MODE_ALLOW_ICANN, $extract->getExtractionMode());
+        $this->assertEquals(Result::class, $extract->getResult());
     }
 
     /**
@@ -89,7 +82,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorNonExistenceClass()
     {
-        $this->setExpectedException(RuntimeException::class, 'is not defined');
+        $this->expectException(RuntimeException::class);
         new Extract(null, 'NonExistenceClass');
     }
 
@@ -100,7 +93,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorNotImplements()
     {
-        $this->setExpectedException(RuntimeException::class, 'not implements ResultInterface');
+        $this->expectException(RuntimeException::class);
         new Extract(null, Extract::class);
     }
 
@@ -116,34 +109,31 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
         // Variant 1.
 
         $extract->setExtractionMode(null);
-        static::assertAttributeEquals(
-            Extract::MODE_ALLOW_ICANN | Extract::MODE_ALLOW_PRIVATE | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES,
-            'extractionMode',
-            $extract
-        );
+        $this->assertEquals(Extract::MODE_ALLOW_ICANN | Extract::MODE_ALLOW_PRIVATE | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES, $extract->getExtractionMode());
 
         // Variant 2.
 
         $extract->setExtractionMode(Extract::MODE_ALLOW_ICANN);
-        static::assertAttributeEquals(Extract::MODE_ALLOW_ICANN, 'extractionMode', $extract);
+
+
+        $this->assertEquals(Extract::MODE_ALLOW_ICANN, $extract->getExtractionMode());
 
         // Variant 3.
 
         $extract->setExtractionMode(Extract::MODE_ALLOW_PRIVATE);
-        static::assertAttributeEquals(Extract::MODE_ALLOW_PRIVATE, 'extractionMode', $extract);
+        $this->assertEquals(Extract::MODE_ALLOW_PRIVATE, $extract->getExtractionMode());
 
         // Variant 4.
 
         $extract->setExtractionMode(Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES);
-        static::assertAttributeEquals(Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES, 'extractionMode', $extract);
+        $this->assertEquals(Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES, $extract->getExtractionMode());
 
         // Variant 5.
 
         $extract->setExtractionMode(Extract::MODE_ALLOW_PRIVATE | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES);
-        static::assertAttributeEquals(
+        $this->assertEquals(
             Extract::MODE_ALLOW_PRIVATE | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES,
-            'extractionMode',
-            $extract
+            $extract->getExtractionMode()
         );
     }
 
@@ -154,8 +144,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetExtractionModeInvalidArgumentType()
     {
-        $this->setExpectedException(RuntimeException::class, 'Invalid argument type, extractionMode must be integer');
-
+        $this->expectException(RuntimeException::class);
         $extract = new Extract();
         $extract->setExtractionMode('a');
     }
@@ -167,10 +156,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetExtractionModeInvalidArgumentValue()
     {
-        $this->setExpectedException(
-            RuntimeException::class,
-            'Invalid argument type, extractionMode must be one of defined constants'
-        );
+        $this->expectException(RuntimeException::class);
 
         $extract = new Extract();
         $extract->setExtractionMode(-10);
@@ -186,7 +172,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     private function checkPublicDomain($hostname, $expectedResult)
     {
-        static::assertEquals($expectedResult, $this->extract->parse($hostname)->getRegistrableDomain());
+        $this->assertEquals($expectedResult, $this->extract->parse($hostname)->getRegistrableDomain());
     }
 
     /**
@@ -367,7 +353,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     private function checkPublicSuffix($hostname, $expectedResult)
     {
-        static::assertEquals($expectedResult, $this->extract->parse($hostname)->getSuffix());
+        $this->assertEquals($expectedResult, $this->extract->parse($hostname)->getSuffix());
     }
 
     /**
@@ -405,7 +391,7 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     private function checkHost($hostname, $expectedResult)
     {
-        static::assertEquals($expectedResult, $this->extract->parse($hostname)->getHostname());
+        $this->assertEquals($expectedResult, $this->extract->parse($hostname)->getHostname());
     }
 
     /**
@@ -440,15 +426,15 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
     {
         $extract = new Extract(null, null, Extract::MODE_ALLOW_ICANN | Extract::MODE_ALLOW_PRIVATE);
 
-        static::assertNull($extract->parse('example.example')->getSuffix());
-        static::assertNull($extract->parse('a.example.example')->getSuffix());
-        static::assertNull($extract->parse('a.b.example.example')->getSuffix());
-        static::assertNull($extract->parse('localhost')->getSuffix());
-        static::assertNull($extract->parse('example.localhost')->getSuffix());
+        $this->assertNull($extract->parse('example.example')->getSuffix());
+        $this->assertNull($extract->parse('a.example.example')->getSuffix());
+        $this->assertNull($extract->parse('a.b.example.example')->getSuffix());
+        $this->assertNull($extract->parse('localhost')->getSuffix());
+        $this->assertNull($extract->parse('example.localhost')->getSuffix());
 
-        static::assertEquals('com', $extract->parse('example.com')->getSuffix());
-        static::assertEquals('com', $extract->parse('a.example.com')->getSuffix());
-        static::assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
+        $this->assertEquals('com', $extract->parse('example.com')->getSuffix());
+        $this->assertEquals('com', $extract->parse('a.example.com')->getSuffix());
+        $this->assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
     }
 
     /**
@@ -460,19 +446,19 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
     {
         $extract = new Extract(null, null, Extract::MODE_ALLOW_ICANN | Extract::MODE_ALLOW_NOT_EXISTING_SUFFIXES);
 
-        static::assertEquals('example', $extract->parse('example.example')->getSuffix());
-        static::assertEquals('example', $extract->parse('a.example.example')->getSuffix());
-        static::assertEquals('example', $extract->parse('a.b.example.example')->getSuffix());
-        static::assertEquals('localhost', $extract->parse('example.localhost')->getSuffix());
-        static::assertNull($extract->parse('localhost')->getSuffix());
+        $this->assertEquals('example', $extract->parse('example.example')->getSuffix());
+        $this->assertEquals('example', $extract->parse('a.example.example')->getSuffix());
+        $this->assertEquals('example', $extract->parse('a.b.example.example')->getSuffix());
+        $this->assertEquals('localhost', $extract->parse('example.localhost')->getSuffix());
+        $this->assertNull($extract->parse('localhost')->getSuffix());
 
-        static::assertEquals('com', $extract->parse('example.com')->getSuffix());
-        static::assertEquals('com', $extract->parse('a.example.com')->getSuffix());
-        static::assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
+        $this->assertEquals('com', $extract->parse('example.com')->getSuffix());
+        $this->assertEquals('com', $extract->parse('a.example.com')->getSuffix());
+        $this->assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
 
-        static::assertEquals('com', $extract->parse('a.blogspot.com')->getSuffix());
-        static::assertEquals('com', $extract->parse('a.b.blogspot.com')->getSuffix());
-        static::assertEquals('blogspot.com', $extract->parse('a.blogspot.com')->getRegistrableDomain());
+        $this->assertEquals('com', $extract->parse('a.blogspot.com')->getSuffix());
+        $this->assertEquals('com', $extract->parse('a.b.blogspot.com')->getSuffix());
+        $this->assertEquals('blogspot.com', $extract->parse('a.blogspot.com')->getRegistrableDomain());
     }
 
     /**
@@ -484,18 +470,18 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
     {
         $extract = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
 
-        static::assertNull($extract->parse('example.example')->getSuffix());
-        static::assertNull($extract->parse('a.example.example')->getSuffix());
-        static::assertNull($extract->parse('a.b.example.example')->getSuffix());
-        static::assertNull($extract->parse('localhost')->getSuffix());
-        static::assertNull($extract->parse('example.localhost')->getSuffix());
+        $this->assertNull($extract->parse('example.example')->getSuffix());
+        $this->assertNull($extract->parse('a.example.example')->getSuffix());
+        $this->assertNull($extract->parse('a.b.example.example')->getSuffix());
+        $this->assertNull($extract->parse('localhost')->getSuffix());
+        $this->assertNull($extract->parse('example.localhost')->getSuffix());
 
-        static::assertEquals('com', $extract->parse('example.com')->getSuffix());
-        static::assertEquals('com', $extract->parse('a.example.com')->getSuffix());
-        static::assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
-        static::assertEquals('com', $extract->parse('a.blogspot.com')->getSuffix());
-        static::assertEquals('com', $extract->parse('a.b.blogspot.com')->getSuffix());
-        static::assertEquals('blogspot.com', $extract->parse('a.blogspot.com')->getRegistrableDomain());
+        $this->assertEquals('com', $extract->parse('example.com')->getSuffix());
+        $this->assertEquals('com', $extract->parse('a.example.com')->getSuffix());
+        $this->assertEquals('example.com', $extract->parse('a.example.com')->getRegistrableDomain());
+        $this->assertEquals('com', $extract->parse('a.blogspot.com')->getSuffix());
+        $this->assertEquals('com', $extract->parse('a.b.blogspot.com')->getSuffix());
+        $this->assertEquals('blogspot.com', $extract->parse('a.blogspot.com')->getRegistrableDomain());
     }
 
     /**
@@ -508,13 +494,13 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
         $method = new \ReflectionMethod(Extract::class, 'fixQueryPart');
         $method->setAccessible(true);
 
-        static::assertEquals('http://example.com/?query', $method->invoke($this->extract), 'http://example.com/?query');
-        static::assertEquals('http://example.com/?query', $method->invoke($this->extract), 'http://example.com?query');
+        $this->assertEquals('http://example.com/?query', $method->invoke($this->extract), 'http://example.com/?query');
+        $this->assertEquals('http://example.com/?query', $method->invoke($this->extract), 'http://example.com?query');
 
-        static::assertEquals('http://example.com/#hash', $method->invoke($this->extract), 'http://example.com/#hash');
-        static::assertEquals('http://example.com/#hash', $method->invoke($this->extract), 'http://example.com#hash');
+        $this->assertEquals('http://example.com/#hash', $method->invoke($this->extract), 'http://example.com/#hash');
+        $this->assertEquals('http://example.com/#hash', $method->invoke($this->extract), 'http://example.com#hash');
 
-        static::assertEquals('http://example.com/?query#hash', $method->invoke($this->extract), 'http://example.com?query#hash');
+        $this->assertEquals('http://example.com/?query#hash', $method->invoke($this->extract), 'http://example.com?query#hash');
     }
 
     /**
@@ -524,22 +510,22 @@ class ExtractTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseUnderscore()
     {
-        static::assertEquals('com', $this->extract->parse('dkim._domainkey.example.com')->getSuffix());
-        static::assertEquals('example', $this->extract->parse('dkim._domainkey.example.com')->getHostname());
-        static::assertEquals('dkim._domainkey', $this->extract->parse('dkim._domainkey.example.com')->getSubdomain());
-        static::assertEquals(array('dkim','_domainkey'), $this->extract->parse('dkim._domainkey.example.com')->getSubdomains());
+        $this->assertEquals('com', $this->extract->parse('dkim._domainkey.example.com')->getSuffix());
+        $this->assertEquals('example', $this->extract->parse('dkim._domainkey.example.com')->getHostname());
+        $this->assertEquals('dkim._domainkey', $this->extract->parse('dkim._domainkey.example.com')->getSubdomain());
+        $this->assertEquals(array('dkim','_domainkey'), $this->extract->parse('dkim._domainkey.example.com')->getSubdomains());
 
-        static::assertEquals('com', $this->extract->parse('_spf.example.com')->getSuffix());
-        static::assertEquals('example', $this->extract->parse('_spf.example.com')->getHostname());
-        static::assertEquals('_spf', $this->extract->parse('_spf.example.com')->getSubdomain());
+        $this->assertEquals('com', $this->extract->parse('_spf.example.com')->getSuffix());
+        $this->assertEquals('example', $this->extract->parse('_spf.example.com')->getHostname());
+        $this->assertEquals('_spf', $this->extract->parse('_spf.example.com')->getSubdomain());
 
-        static::assertEquals('com', $this->extract->parse('foo_.example.com')->getSuffix());
-        static::assertEquals('example', $this->extract->parse('foo_.example.com')->getHostname());
-        static::assertEquals('foo_', $this->extract->parse('foo_.example.com')->getSubdomain());
+        $this->assertEquals('com', $this->extract->parse('foo_.example.com')->getSuffix());
+        $this->assertEquals('example', $this->extract->parse('foo_.example.com')->getHostname());
+        $this->assertEquals('foo_', $this->extract->parse('foo_.example.com')->getSubdomain());
 
-        static::assertEquals('com', $this->extract->parse('bar.foo_.example.com')->getSuffix());
-        static::assertEquals('example', $this->extract->parse('bar.foo_.example.com')->getHostname());
-        static::assertEquals('bar.foo_', $this->extract->parse('bar.foo_.example.com')->getSubdomain());
-        static::assertEquals(array('bar', 'foo_'), $this->extract->parse('bar.foo_.example.com')->getSubdomains());
+        $this->assertEquals('com', $this->extract->parse('bar.foo_.example.com')->getSuffix());
+        $this->assertEquals('example', $this->extract->parse('bar.foo_.example.com')->getHostname());
+        $this->assertEquals('bar.foo_', $this->extract->parse('bar.foo_.example.com')->getSubdomain());
+        $this->assertEquals(array('bar', 'foo_'), $this->extract->parse('bar.foo_.example.com')->getSubdomains());
     }
 }

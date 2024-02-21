@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP version 5.
  *
@@ -9,15 +10,17 @@
  *
  * @link     https://github.com/layershifter/TLDExtract
  */
+
 namespace LayerShifter\TLDExtract\Tests;
 
 use LayerShifter\TLDExtract\Extract;
 use LayerShifter\TLDExtract\Result;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test that coverages all cases of LayerShifter\TLDExtract\Result.
  */
-class ResultTest extends \PHPUnit_Framework_TestCase
+class ResultTest extends TestCase
 {
     /**
      * Object for tests.
@@ -31,7 +34,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->entity = new Result(null, '192.168.0.1', null);
     }
@@ -193,7 +196,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testSet()
     {
-        $this->setExpectedException('LogicException');
+        $this->expectException(\LogicException::class);
         $this->entity->offsetSet('hostname', 'another-domain');
     }
 
@@ -204,7 +207,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetViaProperty()
     {
-        $this->setExpectedException('LogicException');
+        $this->expectException(\LogicException::class);
         $this->entity->hostname = 'another-domain';
     }
 
@@ -215,7 +218,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet()
     {
-        $this->setExpectedException('OutOfRangeException');
+        $this->expectException(\OutOfRangeException::class);
 
         /* @noinspection PhpUndefinedFieldInspection
          * Test for not existing field
@@ -230,7 +233,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testOffsetSet()
     {
-        $this->setExpectedException('LogicException');
+        $this->expectException(\LogicException::class);
         $this->entity['hostname'] = 'another-domain';
     }
 
@@ -251,7 +254,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     public function testOffsetUnset()
     {
-        $this->setExpectedException('LogicException');
+        $this->expectException(\LogicException::class);
         unset($this->entity['hostname']);
     }
 }

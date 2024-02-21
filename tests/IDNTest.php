@@ -3,13 +3,13 @@
 namespace LayerShifter\TLDExtract\Tests;
 
 use LayerShifter\TLDExtract\IDN;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for IDN class.
  */
-class IDNTest extends \PHPUnit_Framework_TestCase
+class IDNTest extends TestCase
 {
-
     /**
      * @var IDN Object for tests
      */
@@ -20,7 +20,7 @@ class IDNTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->idn = new IDN();
     }

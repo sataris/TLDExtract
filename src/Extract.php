@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TLDExtract: Library for extraction of domain parts e.g. TLD. Domain parser that uses Public Suffix List.
  *
@@ -24,7 +25,6 @@ use TrueBV\Exception\OutOfBoundsException;
  */
 class Extract
 {
-
     /**
      * @const int If this option provided, extract will consider ICANN suffixes.
      */
@@ -127,7 +127,8 @@ class Extract
             throw new RuntimeException('Invalid argument type, extractionMode must be integer');
         }
 
-        if (!in_array($extractionMode, [
+        if (
+            !in_array($extractionMode, [
             static::MODE_ALLOW_ICANN,
             static::MODE_ALLOW_PRIVATE,
             static::MODE_ALLOW_NOT_EXISTING_SUFFIXES,
@@ -135,7 +136,7 @@ class Extract
             static::MODE_ALLOW_ICANN | static::MODE_ALLOW_NOT_EXISTING_SUFFIXES,
             static::MODE_ALLOW_ICANN | static::MODE_ALLOW_PRIVATE | static::MODE_ALLOW_NOT_EXISTING_SUFFIXES,
             static::MODE_ALLOW_PRIVATE | static::MODE_ALLOW_NOT_EXISTING_SUFFIXES
-        ], true)
+            ], true)
         ) {
             throw new RuntimeException(
                 'Invalid argument type, extractionMode must be one of defined constants of their combination'
@@ -394,5 +395,20 @@ class Extract
         }
 
         return Str::substr($url, 0, $position) . '/' . Str::substr($url, $position);
+    }
+
+    public function getSuffixStore(): Store
+    {
+        return $this->suffixStore;
+    }
+
+    public function getExtractionMode(): int
+    {
+        return $this->extractionMode;
+    }
+
+    public function getResult(): string
+    {
+        return $this->resultClassName;
     }
 }
