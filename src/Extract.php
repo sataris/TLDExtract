@@ -368,7 +368,7 @@ class Extract
 
         $type = $this->suffixStore->getType($entry);
 
-        if ($this->extractionMode & static::MODE_ALLOW_ICANN && $type === Store::TYPE_ICANN) {
+        if ($this->extractionMode & static::MODE_ALLOW_ICANN && $type === Store::TYPE_ICCAN) {
             return true;
         }
 

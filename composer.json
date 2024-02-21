@@ -14,7 +14,7 @@
       "email": "a@fedyashov.com"
     }
   ],
-  "require": {
+    "require": {
     "php": "^5.5.0 || ^7.0 || ^8.0",
     "layershifter/tld-database": "^1.0",
     "layershifter/tld-support": "^1.1",

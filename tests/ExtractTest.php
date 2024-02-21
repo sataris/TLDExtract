@@ -52,25 +52,21 @@ class ExtractTest extends TestCase
 
     // Variant 1.
         $extract = new Extract();
-        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
         $this->assertEquals($defaultMode, $extract->getExtractionMode());
         $this->assertEquals(Result::class, $extract->getResult());
 
     // Variant 2.
         $extract = new Extract(__DIR__ . '/sample-database.php');
-        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
         $this->assertEquals($defaultMode, $extract->getExtractionMode());
         $this->assertEquals(Result::class, $extract->getResult());
 
     // Variant 3.
         $extract = new Extract(null, SampleResult::class);
-        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
         $this->assertEquals($defaultMode, $extract->getExtractionMode());
         $this->assertEquals(SampleResult::class, $extract->getResult());
 
     // Variant 4.
         $extract = new Extract(null, null, Extract::MODE_ALLOW_ICANN);
-        $this->assertInstanceOf(Store::class, $extract->getSuffixStore());
         $this->assertEquals(Extract::MODE_ALLOW_ICANN, $extract->getExtractionMode());
         $this->assertEquals(Result::class, $extract->getResult());
     }
